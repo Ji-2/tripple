@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+
+    <!-- 해당 설정파일에서 사용하는 프로퍼티-->
+    <Properties>
+        <!-- log file path -->
+        <property name="LOGS_PATH" value="datamarket_admin_back_logs" />
+    </Properties>
+
+    <Appenders>
+        <Console name="console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d %5p [%c] %m%n" />
+        </Console>
+        <RollingFile name="RollingFile">
+            <FileName>${LOGS_PATH}/${date:yyyy}/${date:MM}/dailyLog.log</FileName>
+            <FilePattern>${LOGS_PATH}/${date:yyyy}/${date:MM}/dailyLog_%d{yyyyMMdd}.log</FilePattern>
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="10MB"/>
+                <TimeBasedTriggeringPolicy />
+                <!-- 일자별 로그파일 최대 보관주기(~일), 해당 설정일 이상된 파일은 자동으로 제거-->
+                <!--<maxHistory>30</maxHistory>-->
+            </Policies>
+        </RollingFile>
+        <RollingFile name ="RollingFileError">
+            <FileName>${LOGS_PATH}/error/error.log</FileName>
+            <FilePattern>${LOGS_PATH}/error/${date:yyyy}/${date:MM}/errorLog_%d{yyyyMMdd}.log</FilePattern>
+            <PatternLayout>
+                <Pattern>%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n</Pattern>
+            </PatternLayout>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval = "1" modulate = "true"/>
+            </Policies>
+        </RollingFile>
+    </Appenders>
+    <Loggers>
+        <!-- SQL문만을 로그로 남기며, PreparedStatement일 경우 관련된 argument 값으로 대체된 SQL문이 보여진다. -->
+        <logger name="jdbc.sqlonly" level="OFF"/> <!-- SQL문과 해당 SQL을 실행시키는데 수행된 시간 정보(milliseconds)를 포함한다. -->
+
+        <!-- FATAL, ERROR, WARN, INFO, DEBUG, TRACE -->
+        <Root level="DEBUG">
+            <AppenderRef ref="console" />
+            <AppenderRef ref="RollingFile" level="INFO"/>
+            <AppenderRef ref="RollingFileError" level = "ERROR"/>
+        </Root>
+    </Loggers>
+
+
+
+</Configuration>
+
